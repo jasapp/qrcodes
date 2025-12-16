@@ -21,16 +21,18 @@ def generate_qr_with_logo(url, output_file):
     logo_size = int(qr_img.size[0] * 0.20)
     logo = logo.resize((logo_size, logo_size), Image.LANCZOS)
 
-    # Create a white square background for the logo (slightly larger than logo)
-    white_square_size = int(logo_size * 1.2)  # 20% larger than logo
-    white_square = Image.new("RGBA", (white_square_size, white_square_size), (255, 255, 255, 255))
-    
+    # Create a white circular background for the logo (slightly larger than logo)
+    circle_size = int(logo_size * 1.2)  # 20% larger than logo
+    white_circle = Image.new("RGBA", (circle_size, circle_size), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(white_circle)
+    draw.ellipse([0, 0, circle_size, circle_size], fill=(255, 255, 255, 255))
+
     # Calculate positions
-    square_pos = ((qr_img.size[0] - white_square_size) // 2, (qr_img.size[1] - white_square_size) // 2)
+    circle_pos = ((qr_img.size[0] - circle_size) // 2, (qr_img.size[1] - circle_size) // 2)
     logo_pos = ((qr_img.size[0] - logo_size) // 2, (qr_img.size[1] - logo_size) // 2)
 
-    # Paste white square, then logo onto QR code
-    qr_img.paste(white_square, square_pos, white_square)
+    # Paste white circle, then logo onto QR code
+    qr_img.paste(white_circle, circle_pos, white_circle)
     qr_img.paste(logo, logo_pos, logo if logo.mode == "RGBA" else None)
 
     # Save the final image
